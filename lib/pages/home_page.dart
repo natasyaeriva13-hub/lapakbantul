@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_page2.dart';
 import 'home_page5.dart';
 
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -9,18 +10,26 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Align(
-          alignment: Alignment.centerLeft,
-          child: Text("Beranda"),
-        ),
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: Image.asset("assets/images/Ellipse 6.png"),
-            onPressed: () {},
-          )
-        ],
+  automaticallyImplyLeading: false,
+
+  title: const Align(
+    alignment: Alignment.centerLeft,
+    child: Text("Beranda"),
+  ),
+
+  centerTitle: false,
+
+  actions: [
+    Padding(
+      padding: const EdgeInsets.only(right: 16),
+      child: Image.asset(
+        "assets/images/Ellipse 6.png",
+        width: 40,
+        height: 40,
       ),
+    ),
+  ],
+),
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,9 +138,13 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
+      // Bottom navigation is handled by the app root navigator (`CustomBottomNav`).
+      // Removed internal `CustomBottomNav` usage to avoid nested scaffolds.
     );
   }
 }
+
+
 
 Widget _buildMenuItem(Color color, String imagePath, BuildContext context, {VoidCallback? onPressed}) {
   Widget content = Container(

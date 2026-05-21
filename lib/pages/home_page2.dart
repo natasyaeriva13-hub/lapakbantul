@@ -205,6 +205,7 @@ class HomePage2 extends StatelessWidget {
           ],
         ),
       ),
+
     );
   }
 }

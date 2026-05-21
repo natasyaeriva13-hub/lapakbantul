@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'home_page2.dart';
+
 
 class HomePage3 extends StatelessWidget {
   const HomePage3({super.key});
@@ -12,11 +14,14 @@ class HomePage3 extends StatelessWidget {
        elevation: 1,
        centerTitle: true,
        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HomePage2()),
+            );
           },
-       ),
+        ),
        title: const Text(
           "Layanan Keliling",
           style: TextStyle(

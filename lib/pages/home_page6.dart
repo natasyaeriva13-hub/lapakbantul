@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_page5.dart';
 
 class HomePage6 extends StatelessWidget {
   const HomePage6({super.key});
@@ -40,9 +41,12 @@ class HomePage6 extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HomePage5()),
+            );
           },
         ),
       ),

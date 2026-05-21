@@ -1,18 +1,53 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'home_page6.dart';
+import 'home_page.dart';
 
 class HomePage5 extends StatefulWidget {
   const HomePage5({super.key});
 
   @override
-  _HomePage5State createState() => _HomePage5State();
+  State<HomePage5> createState() => _HomePage5State();
 }
 
 class _HomePage5State extends State<HomePage5> {
   TextEditingController controller = TextEditingController();
   bool tampil = false;
 
+  List dataPbb = [];
+
+ List<String> histori = [
+    "764177342178410"
+  ];
+  bool tampilHistori = false;
+
+  Future<void> loadJson() async {
+
+  final String response =
+      await rootBundle.loadString(
+        'assets/data/pbb.json',
+      );
+
+  final data = json.decode(response);
+
+  setState(() {
+    dataPbb = data;
+  });
+}
+
+@override
+void initState() {
+  super.initState();
+  loadJson();
+}
   void cekData() {
-    if (controller.text == "764177342178410") {
+    if (
+  dataPbb.any(
+    (item) =>
+        item["nop"] == controller.text,
+  )
+) {
       setState(() {
         tampil = true;
       });
@@ -24,7 +59,11 @@ class _HomePage5State extends State<HomePage5> {
   }
 
   Widget cardSPPT(
-      String tahun, String status, Color warnaStatus, String harga) {
+      BuildContext context,
+      String tahun, 
+      String status, 
+      Color warnaStatus, 
+      String harga) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: EdgeInsets.all(16),
@@ -89,12 +128,25 @@ class _HomePage5State extends State<HomePage5> {
 
           SizedBox(height: 10),
 
-          Center(
-            child: Text(
-              "Lihat Detail >",
-              style: TextStyle(color: Colors.grey),
-            ),
-          )
+Center(
+  child: status == "Lunas"
+      ? InkWell(
+          onTap: () {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HomePage6()),
+            );
+          },
+          child: Text(
+            "Lihat Detail >",
+            style: TextStyle(color: Colors.grey),
+          ),
+        )
+      : Text(
+          "Lihat Detail >",
+          style: TextStyle(color: Colors.grey),
+        ),
+)
         ],
       ),
     );
@@ -105,7 +157,15 @@ class _HomePage5State extends State<HomePage5> {
     return Scaffold(
       appBar: AppBar(
         title: Text("PBB"),
-        leading: Icon(Icons.arrow_back),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const HomePage()),
+            );
+          },
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0,
@@ -118,11 +178,22 @@ class _HomePage5State extends State<HomePage5> {
             padding: EdgeInsets.all(20),
             child: TextField(
               controller: controller,
+              onTap:() {
+                setState(() {
+                  tampilHistori = true;
+                });
+              },
               onSubmitted: (value) {
                 cekData(); // dijalankan saat tekan Enter
               },
+
+              onChanged: (value) {
+                setState(() {
+                  tampilHistori = value.isEmpty; // tampil histori jika input kosong
+                });
+              },
               decoration: InputDecoration(
-                hintText: "Masukkan NOP...",
+                hintText: "Masukan NOP...",
                 prefixIcon: Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
@@ -133,10 +204,75 @@ class _HomePage5State extends State<HomePage5> {
             ),
           ),
 
-          if (tampil) ...[
-            cardSPPT("2021", "Belum lunas", Colors.red, "200.000"),
-            cardSPPT("2020", "Lunas", Colors.green, "376.000"),
-          ]
+          if (tampilHistori)
+  Container(
+    margin: EdgeInsets.symmetric(horizontal: 20),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black12,
+          blurRadius: 5,
+        )
+      ],
+    ),
+
+    child: ListTile(
+      leading: Icon(Icons.history),
+
+      title: Text("764177342178410"),
+
+      onTap: () {
+
+        controller.text = "764177342178410";
+
+        setState(() {
+          tampilHistori = false;
+        });
+
+        cekData();
+      },
+    ),
+  ),
+        if (!tampil)
+          Column(
+              children: [
+                Icon(
+                  Icons.search,
+                  size: 70,
+                  color: const Color(0xFF003566),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  "Masukan NOP untuk melihat\nrincian pajak.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+
+          if (tampil)
+  ...dataPbb
+      .where(
+        (item) =>
+            item["nop"] ==
+            controller.text,
+      )
+      .map(
+        (item) => cardSPPT(
+          context,
+          item["tahun"],
+          item["status"],
+          item["status"] == "Lunas"
+              ? Colors.green
+              : Colors.red,
+          item["harga"],
+        ),
+      ),
         ],
       ),
     );
