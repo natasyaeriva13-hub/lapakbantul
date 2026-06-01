@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lapak_bantul_project/widget/custom_bottom_nav.dart';
 import 'halamandaftar.dart';
 import '../widget/forgot_password.dart';
+import '../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -225,11 +226,11 @@ final _formKey = GlobalKey<FormState>();
                   width: double.infinity,
                   height: 50,
 
-                  child: OutlinedButton.icon(
+                  child: ElevatedButton.icon(
 
-                    style: OutlinedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-
+                      elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -239,25 +240,42 @@ final _formKey = GlobalKey<FormState>();
                       ),
                     ),
 
-                    onPressed: () {
+                    onPressed: () async {
 
-                      // SIMULASI LOGIN GOOGLE
+  final user =
+      await AuthService().signInWithGoogle();
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Berhasil login dengan Google",
-                          ),
-                        ),
-                      );
+  if (!mounted) return;
 
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const CustomBottomNav(),
-                        ),
-                      );
-                    },
+  if (user != null) {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Berhasil login dengan Google",
+        ),
+      ),
+    );
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const CustomBottomNav(),
+      ),
+    );
+
+  } else {
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Login Google dibatalkan",
+        ),
+      ),
+    );
+
+  }
+},
 
                     icon: Image.asset(
                       "assets/images/google.png",

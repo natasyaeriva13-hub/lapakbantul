@@ -24,15 +24,13 @@ class _HomePage5State extends State<HomePage5> {
 
   Future<void> loadJson() async {
 
-  final String response =
+    String data =
       await rootBundle.loadString(
         'assets/data/pbb.json',
       );
 
-  final data = json.decode(response);
-
   setState(() {
-    dataPbb = data;
+    dataPbb = json.decode(data);
   });
 }
 

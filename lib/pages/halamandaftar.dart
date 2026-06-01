@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'halamanlogin.dart'; 
-import 'home_page.dart';
+
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -74,13 +74,15 @@ final _formKey = GlobalKey<FormState>();
                 ),
               ),
 
+              const SizedBox(height: 32),
+              
               TextFormField(
                   controller: _nameCtrl,
                   decoration: _inputDecor('Nama Lengkap', Icons.person_outline),
                   validator: (v) =>
                       (v == null || v.isEmpty) ? 'Nama tidak boleh kosong' : null,
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 16),
                 TextFormField(
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
@@ -157,47 +159,6 @@ final _formKey = GlobalKey<FormState>();
               const SizedBox(height: 16),
 
 
-SizedBox(
-  width: double.infinity,
-  height: 50,
-  child: OutlinedButton.icon(
-    style: OutlinedButton.styleFrom(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      side: const BorderSide(
-        color: Colors.grey,
-      ),
-    ),
-
-    onPressed: () {
-
-      // sementara langsung masuk home
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const HomePage(),
-        ),
-      );
-    },
-
-    icon: Image.asset(
-      "assets/images/google.png",
-      width: 24,
-      height: 24,
-    ),
-
-    label: const Text(
-      "Daftar dengan Google",
-      style: TextStyle(
-        color: Colors.black,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  ),
-),
 
               // 🔥 TEXT MASUK
               Center(
