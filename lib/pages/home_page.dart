@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'home_page2.dart';
 import 'home_page5.dart';
 
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -10,26 +9,18 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  automaticallyImplyLeading: false,
-
-  title: const Align(
-    alignment: Alignment.centerLeft,
-    child: Text("Beranda"),
-  ),
-
-  centerTitle: false,
-
-  actions: [
-    Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Image.asset(
-        "assets/images/Ellipse 6.png",
-        width: 40,
-        height: 40,
+        title: const Align(
+          alignment: Alignment.centerLeft,
+          child: Text("Beranda"),
+        ),
+        centerTitle: false,
+        actions: [
+          IconButton(
+            icon: Image.asset("assets/images/Ellipse 6.png"),
+            onPressed: () {},
+          )
+        ],
       ),
-    ),
-  ],
-),
 
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,9 +88,10 @@ class HomePage extends StatelessWidget {
           Expanded(
             child: GridView.count(
               padding: const EdgeInsets.all(20),
-              crossAxisCount: 2,
+              crossAxisCount: 3,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
+              childAspectRatio: 1.3,
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
   // 🔥 10.png → ke home_page4
@@ -110,7 +102,7 @@ class HomePage extends StatelessWidget {
     onPressed: () {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => const HomePage5()),
+        MaterialPageRoute(builder: (_) => const PbbApp()),
       );
     },
   ),
@@ -138,13 +130,9 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      // Bottom navigation is handled by the app root navigator (`CustomBottomNav`).
-      // Removed internal `CustomBottomNav` usage to avoid nested scaffolds.
     );
   }
 }
-
-
 
 Widget _buildMenuItem(Color color, String imagePath, BuildContext context, {VoidCallback? onPressed}) {
   Widget content = Container(
@@ -161,10 +149,15 @@ Widget _buildMenuItem(Color color, String imagePath, BuildContext context, {Void
     ),
     child: ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: Image.asset(
-        imagePath,
-        fit: BoxFit.cover,
-      ),
+      child: Padding(
+  padding: const EdgeInsets.all(20), // biar gak nempel pinggir
+  child: Image.asset(
+    imagePath,
+    fit: BoxFit.contain, // penting → biar full tapi tidak kepotong
+    width: double.infinity,
+    height: double.infinity,
+  ),
+),
     ),
   );
 

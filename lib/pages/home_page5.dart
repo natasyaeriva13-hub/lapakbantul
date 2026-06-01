@@ -1,151 +1,171 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'home_page6.dart';
-import 'home_page.dart';
 
-class HomePage5 extends StatefulWidget {
-  const HomePage5({super.key});
+
+class PbbApp extends StatelessWidget {
+  const PbbApp({super.key});
 
   @override
-  State<HomePage5> createState() => _HomePage5State();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'PBB',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const PbbPage(),
+    );
+  }
 }
 
-class _HomePage5State extends State<HomePage5> {
-  TextEditingController controller = TextEditingController();
-  bool tampil = false;
+class PbbPage extends StatefulWidget {
+  const PbbPage({Key? key}) : super(key: key);
 
-  List dataPbb = [];
+  @override
+  _PbbPageState createState() => _PbbPageState();
+}
 
- List<String> histori = [
-    "764177342178410"
-  ];
-  bool tampilHistori = false;
+class _PbbPageState extends State<PbbPage> {
+  final TextEditingController _controller = TextEditingController();
+  bool _showResults = false;
 
-  Future<void> loadJson() async {
+  void _onSubmit() {
+    final input = _controller.text.trim();
+    setState(() {
+      _showResults = input == '764177342178410';
+    });
 
-    String data =
-      await rootBundle.loadString(
-        'assets/data/pbb.json',
+    if (!_showResults) {
+      // show feedback if needed
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nomor tidak cocok')),
       );
-
-  setState(() {
-    dataPbb = json.decode(data);
-  });
-}
-
-@override
-void initState() {
-  super.initState();
-  loadJson();
-}
-  void cekData() {
-    if (
-  dataPbb.any(
-    (item) =>
-        item["nop"] == controller.text,
-  )
-) {
-      setState(() {
-        tampil = true;
-      });
-    } else {
-      setState(() {
-        tampil = false;
-      });
     }
   }
 
-  Widget cardSPPT(
-      BuildContext context,
-      String tahun, 
-      String status, 
-      Color warnaStatus, 
-      String harga) {
+  Widget _buildStatusTag(String text, Color bgColor) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 3))
-        ],
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("SPPT $tahun",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: warnaStatus,
-                  borderRadius: BorderRadius.circular(20),
+      child: Text(
+        text,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  Widget _buildPbbItem({
+  required String year,
+  required String address,
+  required String njop,
+  required String status,
+  required Color statusColor,
+  bool isDetailClickable = false,
+}) { 
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      elevation: 1,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header: Year + Status Tag
+            Row(
+              children: [
+                Text(
+                  'SPPT $year',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                child: Text(status, style: TextStyle(color: Colors.white)),
-              )
-            ],
-          ),
-          SizedBox(height: 10),
-
-          Row(
-            children: [
-              Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
-              SizedBox(width: 5),
-              Text("DS. Ngireng-ireng RT01/RW01",
-                  style: TextStyle(color: Colors.grey[700])),
-            ],
-          ),
-
-          SizedBox(height: 6),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.attach_money, size: 18, color: Colors.grey),
-                  SizedBox(width: 5),
-                  Text("NJOP Bumi dan Bangunan"),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.blue[800],
-                  borderRadius: BorderRadius.circular(20),
+                const SizedBox(width: 8),
+                _buildStatusTag(status, statusColor),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Address Row
+            Row(
+              children: [
+                const Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    address,
+                    style: const TextStyle(color: Colors.black87),
+                  ),
                 ),
-                child: Text(harga, style: TextStyle(color: Colors.white)),
-              )
-            ],
-          ),
-
-          SizedBox(height: 10),
-
-Center(
-  child: status == "Lunas"
-      ? InkWell(
-          onTap: () {
+              ],
+            ),
+            const SizedBox(height: 6),
+            // NJOP Row
+            Row(
+              children: [
+                const Icon(Icons.home_outlined, size: 18, color: Colors.grey),
+                const SizedBox(width: 4),
+                Text(
+                  'NJOP Bumi dan Bangunan',
+                  style: const TextStyle(color: Colors.black54),
+                ),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[100],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    njop,
+                    style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // Lihat Detail
+            isDetailClickable
+    ? Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: () {
             Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage6()),
+              context,
+              MaterialPageRoute(
+                builder: (_) => const DetailSPPT(),
+              ),
             );
           },
-          child: Text(
-            "Lihat Detail >",
-            style: TextStyle(color: Colors.grey),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Lihat Detail',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              SizedBox(width: 4),
+              Icon(Icons.arrow_forward_ios, size: 14),
+            ],
           ),
-        )
-      : Text(
-          "Lihat Detail >",
-          style: TextStyle(color: Colors.grey),
         ),
-)
-        ],
+      )
+    : InkWell(
+        onTap: () {},
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              'Lihat Detail',
+              style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(width: 4),
+            Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+          ],
+        ),
+      )
+          ],
+        ),
       ),
     );
   }
@@ -154,124 +174,54 @@ Center(
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("PBB"),
+        title: const Text('PBB'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
-            Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage()),
-            );
+            Navigator.pop(context);
           },
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
+        centerTitle: true,
+        elevation: 1,
       ),
-      backgroundColor: Color(0xFFF5F5F5),
-
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: TextField(
-              controller: controller,
-              onTap:() {
-                setState(() {
-                  tampilHistori = true;
-                });
-              },
-              onSubmitted: (value) {
-                cekData(); // dijalankan saat tekan Enter
-              },
-
-              onChanged: (value) {
-                setState(() {
-                  tampilHistori = value.isEmpty; // tampil histori jika input kosong
-                });
-              },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Column(
+          children: [
+            // Search Input Box
+            TextField(
+              controller: _controller,
               decoration: InputDecoration(
-                hintText: "Masukan NOP...",
-                prefixIcon: Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8), // persegi
-                ),
+                hintText: 'Masukkan Nomor',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               ),
+              keyboardType: TextInputType.number,
+              onSubmitted: (_) => _onSubmit(),
             ),
-          ),
-
-          if (tampilHistori)
-  Container(
-    margin: EdgeInsets.symmetric(horizontal: 20),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(8),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black12,
-          blurRadius: 5,
-        )
-      ],
-    ),
-
-    child: ListTile(
-      leading: Icon(Icons.history),
-
-      title: Text("764177342178410"),
-
-      onTap: () {
-
-        controller.text = "764177342178410";
-
-        setState(() {
-          tampilHistori = false;
-        });
-
-        cekData();
-      },
-    ),
-  ),
-        if (!tampil)
-          Column(
-              children: [
-                Icon(
-                  Icons.search,
-                  size: 70,
-                  color: const Color(0xFF003566),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  "Masukan NOP untuk melihat\nrincian pajak.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-
-          if (tampil)
-  ...dataPbb
-      .where(
-        (item) =>
-            item["nop"] ==
-            controller.text,
-      )
-      .map(
-        (item) => cardSPPT(
-          context,
-          item["tahun"],
-          item["status"],
-          item["status"] == "Lunas"
-              ? Colors.green
-              : Colors.red,
-          item["harga"],
+            const SizedBox(height: 16),
+            // Show results if input is submitted
+            if (_showResults) ...[
+              _buildPbbItem(
+                year: '2021',
+                address: 'DS. Nglireng Ijoja RT01/RW01',
+                njop: '200,000',
+                status: 'BelumLunas',
+                statusColor: const Color.fromARGB(255, 224, 55, 55),
+              ),
+              
+              _buildPbbItem(
+  year: '2020',
+  address: 'DS. Nglireng Ijoja RT01/RW01',
+  njop: '376,000',
+  status: 'Lunas',
+  statusColor: Colors.green,
+  isDetailClickable: true, // 🔥 aktif
+),
+              
+            ],
+          ],
         ),
-      ),
-        ],
       ),
     );
   }

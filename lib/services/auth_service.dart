@@ -6,46 +6,45 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId: kIsWeb
-        ? "898421442078-b5sss0vjnbgn99sbs1p0sgdoavqlu9nv.apps.googleusercontent.com"
-        : null,
-    scopes: ['email'],
-  );
+  scopes: ['email'],
+);
 
   Future<UserCredential?> signInWithGoogle() async {
-    try {
-      GoogleSignInAccount? googleUser;
+  try {
 
-      if (kIsWeb) {
-        // Coba silent sign-in dulu (kalau sudah pernah login)
-        googleUser = await _googleSignIn.signInSilently();
+    if (kIsWeb) {
+      final googleProvider = GoogleAuthProvider();
 
-        // Kalau belum pernah login, pakai requestScopes + signIn
-        if (googleUser == null) {
-          googleUser = await _googleSignIn.signIn();
-        }
-      } else {
-        googleUser = await _googleSignIn.signIn();
-      }
-
-      if (googleUser == null) {
-        debugPrint("GOOGLE ERROR: user cancelled");
-        return null;
-      }
-
-      final googleAuth = await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+      return await FirebaseAuth.instance.signInWithPopup(
+        googleProvider,
       );
+    }
 
-      return await _auth.signInWithCredential(credential);
-    } catch (e) {
-      debugPrint("GOOGLE ERROR: $e");
+    final GoogleSignInAccount? googleUser =
+        await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
       return null;
     }
+
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    final credential =
+        GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    return await FirebaseAuth.instance
+        .signInWithCredential(credential);
+
+  } catch (e) {
+    debugPrint("GOOGLE ERROR: $e");
+    return null;
   }
+}
+
 
   Future<void> logout() async {
     await _googleSignIn.signOut();
