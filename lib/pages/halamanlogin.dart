@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lapak_bantul_natul/pages/halamandaftar.dart';//bagian ini merah
-import 'package:lapak_bantul_natul/pages/home_page.dart';//bagian ini merah
-import 'package:lapak_bantul_natul/services/auth_service.dart';//bagian ini merah
+import 'package:lapak_bantul_natul/pages/halamandaftar.dart';
+import 'package:lapak_bantul_natul/pages/home_page.dart';
+import 'package:lapak_bantul_natul/services/auth_service.dart';
 
 
 class LoginPage extends StatefulWidget{
